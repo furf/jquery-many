@@ -32,7 +32,7 @@
       
       // Takes additional optional boolean true as first argument
       // to rebind events once all are completed
-      .many('mouseover mouseout click', function(evt, originalEvt, idx, tot) {
+      .many(/* true, */ 'mouseover mouseout click', function(evt, originalEvt, idx, tot) {
         console.group(evt.type);                
         console.dir({
           '0_evt': evt,
