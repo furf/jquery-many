@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>untitled</title>
+	<style type="text/css" media="screen">
+	  div.test {
+	    font: 18px/24px helvetica,arial,sans-serif;
+	    font-weight: bold;
+	    border: 1px solid red;
+	    padding: 1em;
+	    background:yellow;
+	    width:25%;
+	    margin:1em;
+	    float:left;
+	  }
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="jquery.many.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	(function($) {
+    $(function() {
+
+      var foo = $('div.test')
+      
+      // Bind callback to completion of each specified event
+      // Takes additional optional boolean true as first argument
+      // to rebind events once all are completed
+      .many(true, 'mouseover mouseout click', function(evt, originalEvt, idx, tot) {
+        console.group(evt.type);                
+        console.dir({
+          '0_evt': evt,
+          '1_originalEvt': originalEvt,
+          '2_idx': idx,
+          '3_tot': tot
+        });  	    
+        if (alert($(this).text())) {
+          $(this).css('background', 'yellow');
+        }
+        console.groupEnd(evt.type);                
+  	  })
+  	  
+      // Bind callback to execution of any event
+  	  .bind('many', {foo:'bar'}, function(evt, originalEvt, idx, tot) {
+        console.group(evt.type);                
+        console.dir({
+          '0_evt': evt,
+          '1_originalEvt': originalEvt,
+          '2_idx': idx,
+          '3_tot': tot
+        });  	    
+        console.log('something happened to "%s"', $(this).attr('id'));
+        console.groupEnd(evt.type);                
+  	  })
+
+      // Bind callback to first executed event
+  	  .bind('many:1', function(evt, originalEvt, idx, tot) {
+        console.group(evt.type);                
+        console.dir({
+          '0_evt': evt,
+          '1_originalEvt': originalEvt,
+          '2_idx': idx,
+          '3_tot': tot
+        });  	    
+  	    console.log('one thing has happened to "%s"', $(this).attr('id'));
+        $(this).css('background', 'orange');
+        console.groupEnd(evt.type);                
+  	  })
+  	  
+      // Bind callback to second executed event
+  	  .bind('many:2', function(evt, originalEvt, idx, tot) {
+        console.group(evt.type);                
+        console.dir({
+          '0_evt': evt,
+          '1_originalEvt': originalEvt,
+          '2_idx': idx,
+          '3_tot': tot
+        });  	    
+  	    console.log('two things have happened to "%s"', $(this).attr('id'));
+        $(this).css('background', 'red');
+        console.groupEnd(evt.type);                
+  	  });
+
+      
+    });
+	})(jQuery);
+	</script>
+</head>
+
+<body>
+
+  <div class="test" id="one">I am one.</div>
+  <div class="test" id="two">I am two.</div>
+  <div class="test" id="three">I am three.</div>
+
+</body>
+</html>
