@@ -9,67 +9,68 @@
       return this;
     }
 
-    var _complete   = $.fn.many.COMPLETE,
-        _incomplete = $.fn.many.INCOMPLETE,
-    
-        // Whether or not to rebind callback after complete event
-        _rebind = (typeof arguments[0] === 'boolean' &&
-          Array.prototype.shift.call(arguments) === true),
+    var PREFIX    = $.fn.many.PREFIX,
+        SEPARATOR = $.fn.many.SEPARATOR,
+        COMPLETE  = PREFIX + SEPARATOR + $.fn.many.COMPLETE,
+        
+    // Arguments to apply to complete event
+    args = $.makeArray(arguments),
 
-        // Extract one events and replace with complete event           
-        _types = $.trim(Array.prototype.splice.call(arguments, 0, 1, _complete)[0]),        
-        _evts  = (_types !== '') ? _types.split(/\W+/) : [],
-        _nEvts = _evts.length,
+    // Whether or not to rebind events after complete
+    rebind = (typeof args[0] === 'boolean' && args.shift() === true),
 
-        // Arguments to apply to complete event
-        _args = arguments,
+    // Extract one event types and replace with complete event           
+    types = $.trim(args.splice(0, 1, COMPLETE)[0]),        
+    ones = (types !== '') ? types.split(/\W+/) : [],
 
-        // Bind complete callback to completion of all events
-        _many = function() {
+    /**
+     * Bind callback to completion of all events
+     */
+    many = function() {
 
-          var $this  = $(this),
-              fired  = [],
-              nFired = 0,
-              ret;
+      var $this = $(this),
+          fired = [],
+          ret;
 
-          // Subscribe callback the complete event
-          $this.one.apply($this, _args);
+      // Subscribe callback the complete event
+      $this.one.apply($this, args);
 
-          // Add a one-time listener to each specified event
-          for (var i = 0; i < _nEvts; ++i) {
-
-            $this.one(_evts[i], function(e) {
-              
-              // Push fired event onto the stack and compare length                
-              fired.push(e.type);
-              nFired = fired.length;
-              
-              ret = [e, nFired, _nEvts];
-              
-              if (nFired === _nEvts) {
-
-                // Fire complete event if all specifed events have fired
-                $this.trigger(_complete, ret);
-                
-                // Reset
-                if (_rebind) {
-                  _many.call(this);
-                }
-                
-              // Fire secondary incomplete events 
-              } else {
-                $this.trigger(_incomplete, ret);                
-                $this.trigger(_incomplete + ':' + nFired, ret);                
-              }
-              
-            });        
+      // Add a listener for each specified one event
+      for (var i = 0, n = ones.length; i < n; ++i) {
+        $this.one(ones[i], function(e) {
+          
+          // Push fired event onto the stack and compare length                
+          fired.push(e.type);
+          
+          // Add'l arguments to pass to bound callbacks
+          ret = [e, fired.length, ones.length];
+          
+          // Fire complete event if all specifed events have fired
+          if (fired.length === ones.length) {
+            $this.trigger(COMPLETE, ret);
+            
+            // Rebind
+            if (rebind) {
+              many.call(this);
+            }
+            
+          // Fire partial events 
+          } else {
+            $this.trigger(PREFIX, ret);                
+            $this.trigger(PREFIX + SEPARATOR + fired.length, ret);                
           }
-        };
+          
+        });        
+      }
+    };
 
-    return (_nEvts > 0) ? this.each(_many) : this;
+    return (ones.length > 0) ? this.each(many) : this;
   };
   
-  $.fn.many.COMPLETE   = 'many:complete';
-  $.fn.many.INCOMPLETE = 'many';
+  $.extend($.fn.many, {
+    PREFIX:    'many',
+    SEPARATOR: ':',
+    COMPLETE:  'complete'
+  });
   
 })(jQuery);

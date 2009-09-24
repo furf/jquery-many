@@ -27,6 +27,9 @@
       var foo = $('div.test')
       
       // Bind callback to completion of each specified event
+      
+      // Works with DOM or custom events
+      
       // Takes additional optional boolean true as first argument
       // to rebind events once all are completed
       .many(true, 'mouseover mouseout click', function(evt, originalEvt, idx, tot) {
@@ -37,9 +40,8 @@
           '2_idx': idx,
           '3_tot': tot
         });  	    
-        if (alert($(this).text())) {
-          $(this).css('background', 'yellow');
-        }
+        console.log($(this).text());
+        $(this).css('background', 'yellow');
         console.groupEnd(evt.type);                
   	  })
   	  
@@ -94,7 +96,6 @@
 
   <div class="test" id="one">I am one.</div>
   <div class="test" id="two">I am two.</div>
-  <div class="test" id="three">I am three.</div>
 
 </body>
 </html>
