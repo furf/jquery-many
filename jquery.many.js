@@ -21,7 +21,7 @@
 
     // Extract one event types and replace with complete event           
     types = $.trim(args.splice(0, 1, COMPLETE)[0]),        
-    ones = (types !== '') ? types.split(/\W+/) : [],
+    ones = (types !== '') ? types.split(/\s+/) : [],
 
     /**
      * Bind callback to completion of all events
