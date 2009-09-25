@@ -14,7 +14,7 @@
         COMPLETE  = PREFIX + SEPARATOR + $.fn.many.COMPLETE,
         
     // Arguments to apply to complete event
-    args = $.makeArray(arguments),
+    args = Array.prototype.slice.call(arguments, 0),
 
     // Whether or not to rebind events after complete
     rebind = (typeof args[0] === 'boolean' && args.shift() === true),
@@ -63,7 +63,6 @@
         });        
       }
     };
-
     return (ones.length > 0) ? this.each(many) : this;
   };
   
